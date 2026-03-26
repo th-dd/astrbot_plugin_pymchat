@@ -136,6 +136,13 @@ class PymChatPlugin(Star):
             logger.error(f"PymChat发送消息异常: {e}")
             return {"success": False, "error": str(e)}
 
+    async def send_message_api_by_user_id(self, user_id: str, target: str, message: str, message_type: str = "private") -> Dict[str, Any]:
+        """根据user_id发送消息（供LLM工具调用）"""
+        user = self.users.get(user_id)
+        if not user:
+            return {"success": False, "error": "用户未登录，请先使用 pc登录"}
+        return await self.send_message_api(user, target, message, message_type)
+
     @filter.command("pc登录")
     async def cmd_login(self, event: AstrMessageEvent):
         """

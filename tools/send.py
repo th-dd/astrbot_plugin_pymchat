@@ -78,7 +78,10 @@ class SendPymChatMessageTool(FunctionTool[AstrAgentContext]):
         if not target or not message:
             return "错误：缺少必要参数 target 或 message"
 
-        result = await self.plugin_instance.send_message(target, message, message_type)
+        # 获取当前用户ID并发送消息
+        event = context.context.event
+        user_id = str(event.sender_id)
+        result = await self.plugin_instance.send_message_api_by_user_id(user_id, target, message, message_type)
 
         if result.get("success"):
             return f"消息已成功发送给 {target}（类型: {message_type}）"
