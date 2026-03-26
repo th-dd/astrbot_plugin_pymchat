@@ -1,6 +1,6 @@
-name: pymchat
+name: astrbot_plugin_pymchat
 display_name: PymChat 集成
-desc: 集成PymChat跨平台聊天API，支持LLM工具调用和指令发送消息
+desc: 集成PymChat跨平台聊天API，支持LLM工具调用和中文指令发送消息，支持多用户登录
 version: v1.0.0
 author: 叹号大帝
 repo: https://github.com/th-dd/astrbot_plugin_pymchat

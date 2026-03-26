@@ -5,7 +5,6 @@ PymChat插件主文件
 """
 import httpx
 import json
-import os
 from pathlib import Path
 from typing import Optional, Dict, Any
 from dataclasses import dataclass
@@ -26,7 +25,7 @@ class PymChatUser:
     api_key: str
 
 
-@register("pymchat", "叹号大帝", "集成PymChat跨平台聊天API，支持LLM工具调用和中文指令发送消息", "1.0.0")
+@register("astrbot_plugin_pymchat", "叹号大帝", "集成PymChat跨平台聊天API，支持LLM工具调用和中文指令发送消息", "1.0.0")
 class PymChatPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
@@ -34,7 +33,7 @@ class PymChatPlugin(Star):
         self.pending_login: Dict[str, Dict[str, Any]] = {}  # token -> {user_id}
         self.users: Dict[str, PymChatUser] = {}  # user_id -> PymChatUser
         # 使用get_astrbot_data_path获取数据目录
-        self.data_dir = Path(get_astrbot_data_path()) / "plugin_data" / "pymchat"
+        self.data_dir = Path(get_astrbot_data_path()) / "plugin_data" / "astrbot_plugin_pymchat"
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.data_file = self.data_dir / "pymchat_users.json"
         self._load_config()
