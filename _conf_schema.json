@@ -1,0 +1,7 @@
+{
+  "api_url": {
+    "description": "PymChat API地址",
+    "type": "string",
+    "default": "https://chat.qplm.xyz/api/messages.php"
+  }
+}
