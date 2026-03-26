@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.star import Context, Star, register
 from astrbot.api import logger
-from astrbot.core.star.star_tools import StarTools
+from astrbot.core.utils.astrbot_path import get_astrbot_data_path
 
 from .tools.send import SendPymChatMessageTool
 
@@ -33,7 +33,9 @@ class PymChatPlugin(Star):
         self.api_url = "https://chat.qplm.xyz/api/messages.php"
         self.pending_login: Dict[str, Dict[str, Any]] = {}  # token -> {user_id}
         self.users: Dict[str, PymChatUser] = {}  # user_id -> PymChatUser
-        self.data_dir = StarTools.get_data_dir()
+        # 使用get_astrbot_data_path获取数据目录
+        self.data_dir = Path(get_astrbot_data_path()) / "plugin_data" / "pymchat"
+        self.data_dir.mkdir(parents=True, exist_ok=True)
         self.data_file = self.data_dir / "pymchat_users.json"
         self._load_config()
         self._load_users()
@@ -135,13 +137,6 @@ class PymChatPlugin(Star):
             logger.error(f"PymChat发送消息异常: {e}")
             return {"success": False, "error": str(e)}
 
-    async def send_message_by_user_id(self, user_id: str, target: str, message: str, message_type: str = "private") -> Dict[str, Any]:
-        """根据user_id发送消息"""
-        user = self.users.get(user_id)
-        if not user:
-            return {"success": False, "error": "用户未登录"}
-        return await self.send_message_api(user, target, message, message_type)
-
     @filter.command("pc登录")
     async def cmd_login(self, event: AstrMessageEvent):
         """
@@ -170,13 +165,13 @@ class PymChatPlugin(Star):
             # 群内带token，验证并登录
             token = parts[0]
             pending = self.pending_login.get(token)
-            
+
             if not pending:
                 yield event.plain_result("Token无效或已过期，请先发送 pc登录 获取新token")
                 return
-            
+
             del self.pending_login[token]
-            
+
             yield event.plain_result(
                 "Token验证通过\n"
                 "请私聊机器人完成最终登录：\n"
