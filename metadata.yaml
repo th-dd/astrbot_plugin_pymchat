@@ -1,0 +1,10 @@
+name: pymchat
+display_name: PymChat 集成
+desc: 集成PymChat跨平台聊天API，支持LLM工具调用和指令发送消息
+version: v1.0.0
+author: 叹号大帝
+repo: https://github.com/th-dd/astrbot_plugin_pymchat
+support_platforms:
+  - qq_official
+  - telegram
+  - discord
