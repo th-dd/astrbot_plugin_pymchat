@@ -29,21 +29,22 @@ class PymChatUser:
 class PymChatPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
+        # 默认API地址，用户也可通过配置覆盖
         self.api_url = "https://chat.qplm.xyz/api/messages.php"
         self.pending_login: Dict[str, Dict[str, Any]] = {}  # token -> {user_id}
         self.users: Dict[str, PymChatUser] = {}  # user_id -> PymChatUser
+        
         # 使用get_astrbot_data_path获取数据目录
         self.data_dir = Path(get_astrbot_data_path()) / "plugin_data" / "astrbot_plugin_pymchat"
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.data_file = self.data_dir / "pymchat_users.json"
-        self._load_config()
+        
+        # 尝试从配置加载API地址（如果插件有配置）
+        if hasattr(self, 'config') and self.config:
+            if isinstance(self.config, dict):
+                self.api_url = self.config.get("api_url", self.api_url)
+        
         self._load_users()
-
-    def _load_config(self):
-        """加载配置"""
-        config = self.context.get_config()
-        if config:
-            self.api_url = config.get("api_url", self.api_url)
 
     def _load_users(self):
         """加载已保存的用户数据"""
