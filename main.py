@@ -11,7 +11,6 @@ from dataclasses import dataclass
 
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.star import Context, Star, register
-from astrbot.api import AstrBotConfig
 from astrbot.api import logger
 from astrbot.core.utils.astrbot_path import get_astrbot_data_path
 
@@ -28,8 +27,8 @@ class PymChatUser:
 
 @register("astrbot_plugin_pymchat", "叹号大帝", "集成PymChat跨平台聊天API，支持LLM工具调用和中文指令发送消息", "1.0.0")
 class PymChatPlugin(Star):
-    def __init__(self, context: Context, config: AstrBotConfig | None = None):
-        super().__init__(context, config)
+    def __init__(self, context: Context):
+        super().__init__(context)
         self.api_url = "https://chat.qplm.xyz/api/messages.php"
         self.pending_login: Dict[str, Dict[str, Any]] = {}  # token -> {user_id}
         self.users: Dict[str, PymChatUser] = {}  # user_id -> PymChatUser
@@ -37,11 +36,12 @@ class PymChatPlugin(Star):
         self.data_dir = Path(get_astrbot_data_path()) / "plugin_data" / "astrbot_plugin_pymchat"
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.data_file = self.data_dir / "pymchat_users.json"
-        self._load_config(config)
+        self._load_config()
         self._load_users()
 
-    def _load_config(self, config: AstrBotConfig | None):
+    def _load_config(self):
         """加载配置"""
+        config = self.context.get_config()
         if config:
             self.api_url = config.get("api_url", self.api_url)
 
